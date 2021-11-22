@@ -2,7 +2,9 @@ library(tidyverse)
 library(tidytext)
 library(textdata)
 library(gutenbergr)
+library(wordcloud2)
 
+# Find and download Our Mutual Friend
 gutenberg_metadata %>% 
   filter(title == "Our Mutual Friend") %>% 
   select(gutenberg_id, has_text)
@@ -11,6 +13,7 @@ omf <- gutenberg_download(883)
 
 glimpse(omf)
 
+# Divide into chapters and tokenize
 omf <- omf %>%
   mutate(linenumber = row_number(),
          chapter = cumsum(str_detect(text, regex("^chapter [\\divxlc]",
@@ -21,25 +24,52 @@ omf <- omf %>%
   unnest_tokens(word, text) %>% 
   anti_join(stop_words)
 
+# EDA
+
+# top n words
 omf %>% count(word, sort = TRUE) %>% 
   top_n(10, n) %>% 
   ggplot(aes(x = reorder(word, -n), y = n)) +
   geom_col()
 
+# obligatory wordcloud
+omf_wordfreq <- omf %>%
+  count(word) %>% 
+  mutate(total_words = sum(n),
+         freq = n/total_words) %>% 
+  arrange(desc(freq))
+
+set.seed(1212)
+omf_wordfreq %>% slice(1:1000) %>% 
+  wordcloud2(size = 0.5,
+             shuffle = TRUE)
+
+# sentiment analysis with Bing et al. dictionary
+
 omf_bing <- omf %>% 
   inner_join(get_sentiments("bing"))
 
-omf_bing %>% group_by(chapter, sentiment) %>% 
-  count() %>% 
-  pivot_wider(names_from = sentiment, values_from = n) %>% 
-  mutate(overall = positive - negative)
-
-omf_bing %>% group_by(chapter, sentiment) %>% 
+omf_bing <- omf_bing %>% 
+  group_by(chapter, sentiment) %>% 
   count() %>% 
   pivot_wider(names_from = sentiment, values_from = n) %>% 
   mutate(overall = positive - negative) %>% 
+  ungroup()
+
+omf_bing %>% 
   ggplot(aes(x = chapter, y = overall)) +
   geom_col()
+
+# normalize for chapter length
+omf_bing <- omf_bing %>% 
+  mutate(ch_total = negative + positive,
+         ch_percent = overall/ch_total)
+
+omf_bing %>% 
+  ggplot(aes(x = chapter, y = ch_percent)) +
+  geom_col()
+
+# sentiment analysis with NRC dictionary
 
 get_sentiments("nrc")
 
@@ -60,7 +90,8 @@ omf_nrc_meansent <- omf_nrc %>%
   summarize(count = n()) %>% 
   group_by(sentiment) %>% 
   mutate(mean_sentiment = mean(count)) %>% 
-  summarize(mean_sentiment = mean(mean_sentiment))
+  summarize(mean_sentiment = mean(mean_sentiment)) %>% 
+  ungroup()
 
 omf_nrc %>% ggplot(aes(x = chapter, fill = sentiment)) +
   geom_hline(data = omf_nrc_meansent,
@@ -77,12 +108,6 @@ omf_nrc %>% ggplot(aes(x = chapter)) +
 
 # normalize for % of sentiment per chapter/overall
 
-omf_nrc %>% group_by(chapter) %>% 
-  summarize(words_in_chapter = n()) %>% 
-  group_by(chapter, sentiment) %>% 
-  summarize(sentiment_in_chapter = n(),
-         sentiment_per_chapter = sentiment_in_chapter/words_in_chapter)
-
 omf_nrc %>% group_by(chapter, sentiment) %>% 
   summarize(sentiment_in_chapter = n()) %>% 
   group_by(chapter) %>% 
@@ -91,3 +116,18 @@ omf_nrc %>% group_by(chapter, sentiment) %>%
   ggplot(aes(x = chapter, y = sentiment_per_chapter)) +
   geom_col() +
   facet_wrap(~ sentiment)
+
+omf_nrc_meansent <- omf_nrc %>% 
+  group_by(sentiment, chapter) %>% 
+  summarize(count = n()) %>% 
+  group_by(sentiment) %>% 
+  mutate(mean_sentiment = mean(count)) %>% 
+  summarize(mean_sentiment = mean(mean_sentiment))
+
+omf_nrc %>% group_by(chapter, sentiment) %>% 
+  summarize(sentiment_in_chapter = n()) %>% 
+  group_by(chapter) %>% 
+  mutate(words_in_chapter = sum(sentiment_in_chapter),
+         sentiment_per_chapter = sentiment_in_chapter/words_in_chapter) %>% 
+  group_by(sentiment) %>% 
+  summarize(mean_sent_overall = mean(sentiment_per_chapter))
