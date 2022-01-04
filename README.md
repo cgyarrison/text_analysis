@@ -1,8 +1,8 @@
 # Various text analysis projects
 
-Currently I'm reading "our Mutual Friend" by Charles Dickens. It's like nothing I've ever read. I was wondering, "What would a computer think of this book?"
+Currently I'm reading *Our Mutual Friend* by Charles Dickens. It's like nothing I've ever read. I was wondering, "What would a computer think of this book?"
 
-Here I'll share what I find! I am indebted to Julia Silge and David Robinson's "Text Mining with R" for getting me started.
+Here I'll share what I find! I am indebted to [Julia Silge](https://twitter.com/juliasilge) and [David Robinson](https://twitter.com/drob)'s [*Text Mining with R*](https://www.tidytextmining.com/) for getting me started.
 
 ## The obligatory wordcloud
 
