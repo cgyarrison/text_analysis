@@ -26,7 +26,7 @@ omf <- omf %>%
 
 # EDA
 
-# top n words
+# top 10 words
 omf %>% count(word, sort = TRUE) %>% 
   top_n(10, n) %>% 
   ggplot(aes(x = reorder(word, -n), y = n)) +
@@ -39,10 +39,25 @@ omf_wordfreq <- omf %>%
          freq = n/total_words) %>% 
   arrange(desc(freq))
 
-set.seed(1212)
+# set.seed(1212)
 omf_wordfreq %>% slice(1:1000) %>% 
   wordcloud2(size = 0.5,
              shuffle = TRUE)
+
+# better wordcloud with fancy font
+library(showtext)
+
+# font_add(family = "RomanAntique",
+#          regular = "our_mutual_friend/fonts/RomanAntique.ttf")
+# 
+# showtext_auto()
+
+# set.seed(1212)
+omf_wordfreq %>% slice(1:100) %>% 
+  wordcloud2(fontFamily = "RomanAntique",
+             size = 0.5,
+             shuffle = TRUE,
+             color = "black")
 
 # sentiment analysis with Bing et al. dictionary
 
@@ -131,3 +146,13 @@ omf_nrc %>% group_by(chapter, sentiment) %>%
          sentiment_per_chapter = sentiment_in_chapter/words_in_chapter) %>% 
   group_by(sentiment) %>% 
   summarize(mean_sent_overall = mean(sentiment_per_chapter))
+
+omf_nrc
+
+omf_nrc %>% group_by(chapter) %>% 
+  mutate(positive_tally = case_when(sentiment == "positive" ~ 1,
+                                    sentiment == "negative" ~ -1,
+                                    TRUE ~ 0),
+         positive_overall = sum(positive_tally),
+         positive_multiplier = case_when(positive_overall >= 0 ~ 1,
+                                         positive_overall < 0 ~ -1))
