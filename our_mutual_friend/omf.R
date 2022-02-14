@@ -81,7 +81,7 @@ omf_bing %>%
        y = "Overall sentiment") +
   coord_cartesian(ylim = c(-175, 125)) +
   theme_minimal() +
-  theme(text = element_text(family = "RomanAntique", size = 15))
+  theme(text = element_text(family = "RomanAntique"))
 
 # ggsave("our_mutual_friend/omf_bing.png")
 
@@ -103,7 +103,7 @@ omf_nrc %>% count(sentiment, sort = TRUE) %>%
        x = "Sentiment",
        y = NULL) +
   theme_minimal() +
-  theme(text = element_text(family = "RomanAntique", size = 15))
+  theme(text = element_text(family = "RomanAntique"))
 
 # ggsave("our_mutual_friend/omf_nrc.png")
 
