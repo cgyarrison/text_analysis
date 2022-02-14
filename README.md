@@ -14,4 +14,4 @@ When I first started the book, I would never have guess that the "Boffinses" pla
 
 ![](our_mutual_friend/omf_bing1.png)
 
-![](our_mutual_friend/omf_nrc.png)
+![](our_mutual_friend/omf_nrc1.png)
