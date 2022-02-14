@@ -3,6 +3,7 @@ library(tidytext)
 library(textdata)
 library(gutenbergr)
 library(wordcloud2)
+library(scales)
 
 # Find and download Our Mutual Friend
 gutenberg_metadata %>% 
@@ -47,10 +48,10 @@ omf_wordfreq %>% slice(1:1000) %>%
 # better wordcloud with fancy font
 library(showtext)
 
-# font_add(family = "RomanAntique",
-#          regular = "our_mutual_friend/fonts/RomanAntique.ttf")
-# 
-# showtext_auto()
+font_add(family = "RomanAntique",
+         regular = "our_mutual_friend/fonts/RomanAntique.ttf")
+
+showtext_auto()
 
 # set.seed(1212)
 omf_wordfreq %>% slice(1:100) %>% 
@@ -73,16 +74,17 @@ omf_bing <- omf_bing %>%
 
 omf_bing %>% 
   ggplot(aes(x = chapter, y = overall)) +
-  geom_col()
+  geom_col() +
+  labs(title = "Overall positive/negative sentiment by chapter",
+       subtitle = "Using Bing et al. sentiment dictionary",
+       x = "Chapter",
+       y = "Overall sentiment") +
+  coord_cartesian(ylim = c(-175, 125)) +
+  theme_minimal() +
+  theme(text = element_text(family = "RomanAntique", size = 15))
 
-# normalize for chapter length
-omf_bing <- omf_bing %>% 
-  mutate(ch_total = negative + positive,
-         ch_percent = overall/ch_total)
+# ggsave("our_mutual_friend/omf_bing.png")
 
-omf_bing %>% 
-  ggplot(aes(x = chapter, y = ch_percent)) +
-  geom_col()
 
 # sentiment analysis with NRC dictionary
 
@@ -93,8 +95,17 @@ omf_nrc <- omf %>%
 omf_nrc
 
 omf_nrc %>% count(sentiment, sort = TRUE) %>% 
-  ggplot(aes(x = reorder(sentiment, -n), y = n)) +
-  geom_col()
+  ggplot(aes(x = reorder(sentiment, n), y = n)) +
+  geom_col() +
+  scale_y_continuous(labels = comma_format()) +
+  coord_flip() +
+  labs(title = "Total sentiments according to NRC dictionary",
+       x = "Sentiment",
+       y = NULL) +
+  theme_minimal() +
+  theme(text = element_text(family = "RomanAntique", size = 15))
+
+# ggsave("our_mutual_friend/omf_nrc.png")
 
 omf_nrc %>% ggplot(aes(x = chapter, fill = sentiment)) +
   geom_bar(show.legend = FALSE) +
