@@ -9,3 +9,9 @@ Here I'll share what I find! I am indebted to [Julia Silge](https://twitter.com/
 When I first started the book, I would never have guess that the "Boffinses" played such a central role. But here they are, literally at the center of the wordcloud!
 
 ![](our_mutual_friend/omf_wordcloud.png)
+
+## Sentiment analysis
+
+![](our_mutual_friend/omf_bing.png)
+
+![](our_mutual_friend/omf_nrc.png)
