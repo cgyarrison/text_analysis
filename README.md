@@ -10,11 +10,11 @@ Here I'll share what I find! I am indebted to [Julia Silge](https://twitter.com/
 
 I used the Bing et al. sentiment lexicon, which marks each word as either "positive" or "negative", to get an idea of the ups and downs and overall trajectory of the book. We see that it spends a lot of time in negative territory, punctuated with some lighter chapters, and eventually returns to about level. Phew, we've got plenty of drama, but we're not strapping in for some spiraling tragedy.
 
-![](our_mutual_friend/omf_bing1.png)
+![](our_mutual_friend/omf_bing.png)
 
 The NRC lexicon labels words as positive or negative, but also as potentially joyous, fearful, marking anticipation or disgust, etc. Interestingly, though the Bing analysis tells us that we spend most of our time in negative sentiment, NRC gives a more positive view. Not only are there more positive than negative words, but there is more trust and joy than fear, sadness, or anger, plenty of anticipation, not so much disgust. However I was surprised to see "surprise" come in last.
 
-![](our_mutual_friend/omf_nrc1.png)
+![](our_mutual_friend/omf_nrc.png)
 
 ### The obligatory wordcloud
 
