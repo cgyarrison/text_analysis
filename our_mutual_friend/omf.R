@@ -76,11 +76,10 @@ omf_bing %>%
   ggplot(aes(x = chapter, y = overall)) +
   geom_col() +
   labs(title = "Overall positive/negative sentiment by chapter",
-       subtitle = "Using Bing et al. sentiment dictionary",
        x = "Chapter",
        y = "Overall sentiment") +
   coord_cartesian(ylim = c(-175, 125)) +
-  theme_minimal() +
+  theme_minimal(base_size = 36) +
   theme(text = element_text(family = "RomanAntique"))
 
 # ggsave("our_mutual_friend/omf_bing.png")
@@ -102,68 +101,7 @@ omf_nrc %>% count(sentiment, sort = TRUE) %>%
   labs(title = "Total sentiments according to NRC dictionary",
        x = "Sentiment",
        y = NULL) +
-  theme_minimal() +
+  theme_minimal(base_size = 26) +
   theme(text = element_text(family = "RomanAntique"))
 
-# ggsave("our_mutual_friend/omf_nrc.png")
-
-omf_nrc %>% ggplot(aes(x = chapter, fill = sentiment)) +
-  geom_bar(show.legend = FALSE) +
-  facet_wrap(~ sentiment)
-
-omf_nrc_meansent <- omf_nrc %>% 
-  group_by(sentiment, chapter) %>% 
-  summarize(count = n()) %>% 
-  group_by(sentiment) %>% 
-  mutate(mean_sentiment = mean(count)) %>% 
-  summarize(mean_sentiment = mean(mean_sentiment)) %>% 
-  ungroup()
-
-omf_nrc %>% ggplot(aes(x = chapter, fill = sentiment)) +
-  geom_hline(data = omf_nrc_meansent,
-             aes(yintercept = mean_sentiment)) +
-  geom_bar(show.legend = FALSE) +
-  facet_wrap(~ sentiment)
-
-omf_nrc %>% ggplot(aes(x = chapter)) +
-  geom_density(aes(fill = sentiment), alpha = 0.5)
-
-omf_nrc %>% ggplot(aes(x = chapter)) +
-  geom_density(aes(fill = sentiment), alpha = 0.5,
-               position = "fill")
-
-# normalize for % of sentiment per chapter/overall
-
-omf_nrc %>% group_by(chapter, sentiment) %>% 
-  summarize(sentiment_in_chapter = n()) %>% 
-  group_by(chapter) %>% 
-  mutate(words_in_chapter = sum(sentiment_in_chapter),
-         sentiment_per_chapter = sentiment_in_chapter/words_in_chapter) %>% 
-  ggplot(aes(x = chapter, y = sentiment_per_chapter)) +
-  geom_col() +
-  facet_wrap(~ sentiment)
-
-omf_nrc_meansent <- omf_nrc %>% 
-  group_by(sentiment, chapter) %>% 
-  summarize(count = n()) %>% 
-  group_by(sentiment) %>% 
-  mutate(mean_sentiment = mean(count)) %>% 
-  summarize(mean_sentiment = mean(mean_sentiment))
-
-omf_nrc %>% group_by(chapter, sentiment) %>% 
-  summarize(sentiment_in_chapter = n()) %>% 
-  group_by(chapter) %>% 
-  mutate(words_in_chapter = sum(sentiment_in_chapter),
-         sentiment_per_chapter = sentiment_in_chapter/words_in_chapter) %>% 
-  group_by(sentiment) %>% 
-  summarize(mean_sent_overall = mean(sentiment_per_chapter))
-
-omf_nrc
-
-omf_nrc %>% group_by(chapter) %>% 
-  mutate(positive_tally = case_when(sentiment == "positive" ~ 1,
-                                    sentiment == "negative" ~ -1,
-                                    TRUE ~ 0),
-         positive_overall = sum(positive_tally),
-         positive_multiplier = case_when(positive_overall >= 0 ~ 1,
-                                         positive_overall < 0 ~ -1))
+ggsave("our_mutual_friend/omf_nrc.png")
