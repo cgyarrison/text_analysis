@@ -104,4 +104,4 @@ omf_nrc %>% count(sentiment, sort = TRUE) %>%
   theme_minimal(base_size = 26) +
   theme(text = element_text(family = "RomanAntique"))
 
-ggsave("our_mutual_friend/omf_nrc.png")
+# ggsave("our_mutual_friend/omf_nrc.png", scale = 0.8)
