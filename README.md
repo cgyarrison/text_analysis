@@ -18,6 +18,6 @@ The NRC lexicon labels words as positive or negative, but also as potentially jo
 
 ### The obligatory wordcloud
 
-When I first started the book, I would never have guess that the "Boffinses" played such a central role. But here they are, literally at the center of the wordcloud:
+When I first started the book, I would never have guessed that the "Boffinses" played such a central role. But here they are, literally at the center of the wordcloud:
 
 ![](our_mutual_friend/omf_wordcloud.png)
